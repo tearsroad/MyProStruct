@@ -78,7 +78,7 @@ public class Api {
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
                 //注册自定义的工厂类
-                .addConverterFactory(ResponseConverterFactory.create())
+                .addConverterFactory(ResponseConverterFactory.create(gson))
 //                .addConverterFactory(GsonConverterFactory.create(gson))//自动用gson转换工具
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//service返回值就不在是一个Call了，而是一个Observable
                 .baseUrl(BASE_URL)
