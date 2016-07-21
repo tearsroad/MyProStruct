@@ -4,6 +4,7 @@ package com.esyto.myprostruct.login;
 import android.content.Context;
 
 import com.esyto.myprostruct.C;
+import com.esyto.myprostruct.api.error.ApiException;
 import com.esyto.myprostruct.api.error.ResultException;
 import com.esyto.myprostruct.api.progress.ProgressSubscriber;
 import com.esyto.myprostruct.base.SubscriberOnNextListener;
@@ -30,38 +31,16 @@ public class LoginPresenter extends LoginContract.Presenter {
             @Override
             protected void onResult(_User user) {
                 SpUtil.setUser(user);
-                user.response_text.toString();
                 mView.showMsg(user.toString());
-                Logger.w(user.toString());
                 mRxManager.post(C.EVENT_LOGIN, user);
                 mView.loginSuccess();
             }
 
             @Override
-            protected void onError(ResultException rx) {
-                mView.showMsg(rx.getMessage());
+            protected void onMyError(ApiException rx) {
+                mView.showMsg(rx.getMessage()+"\n"+rx.getDisplayMessage());
             }
         }));
     }
-    private SubscriberOnNextListener subscriberOnNextListener = new SubscriberOnNextListener<_User>(){
-
-        @Override
-        public void onNext(_User user) {
-            SpUtil.setUser(user);
-            user.response_text.toString();
-            mView.showMsg(user.toString());
-            Logger.w(user.toString());
-            mRxManager.post(C.EVENT_LOGIN, user);
-            mView.loginSuccess();
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            mView.showMsg("网络连接异常！");
-
-        }
-    };
-
 
 }

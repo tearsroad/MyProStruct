@@ -2,6 +2,8 @@ package com.esyto.myprostruct.api.error;
 
 import android.util.Log;
 
+import com.esyto.myprostruct.App;
+import com.esyto.myprostruct.base.util.NetWorkUtil;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonWriter;
@@ -50,7 +52,13 @@ public class JsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
         Logger.w( "request中传递的json数据：" + postBody);
 //        data.setData(XXTEA.Encrypt(value.toString(), HttpConstant.KEY));
 //        Log.i("xiaozhang", "转化后的数据：" + postBody);
-        return RequestBody.create(MEDIA_TYPE, buffer.readByteString());
+        if (!NetWorkUtil.isNetConnected(App.getAppContext())) {
+            throw new ResultException(ErrorMsg.NONET_ERROR
+                    , "无网络连接，请检查网络！");
+        }else{
+            return RequestBody.create(MEDIA_TYPE, buffer.readByteString());
+        }
+
     }
 
 }

@@ -3,12 +3,14 @@ package com.esyto.myprostruct.api.progress;
 import android.content.Context;
 
 import com.esyto.myprostruct.api.error.ApiException;
+import com.esyto.myprostruct.api.error.ErrorMsg;
 import com.esyto.myprostruct.api.error.ResultException;
 import com.esyto.myprostruct.base.SubscriberOnNextListener;
 import com.google.gson.JsonParseException;
 
 import org.json.JSONException;
 
+import java.net.SocketTimeoutException;
 import java.text.ParseException;
 
 import retrofit2.adapter.rxjava.HttpException;
@@ -23,15 +25,6 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
     private ProgressDialogHandler mProgressDialogHandler;
 
     private Context context;
-    //对应HTTP的状态码
-    private static final int UNAUTHORIZED = 401;
-    private static final int FORBIDDEN = 403;
-    private static final int NOT_FOUND = 404;
-    private static final int REQUEST_TIMEOUT = 408;
-    private static final int INTERNAL_SERVER_ERROR = 500;
-    private static final int BAD_GATEWAY = 502;
-    private static final int SERVICE_UNAVAILABLE = 503;
-    private static final int GATEWAY_TIMEOUT = 504;
     //出错提示
     private final String networkMsg = "网络连接异常，请检查网络";
     private final String parseMsg="数据解析异常";
@@ -73,6 +66,8 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
 
     @Override
     public void onError(Throwable e) {
+        e.printStackTrace();
+        dismissProgressDialog();
         Throwable throwable = e;
         //获取最根源的异常
         while(throwable.getCause() != null){
@@ -84,37 +79,27 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
         if (e instanceof HttpException){             //HTTP错误
             HttpException httpException = (HttpException) e;
             ex = new ApiException(e, httpException.code());
-            switch(httpException.code()){
-                case UNAUTHORIZED:
-                case FORBIDDEN:
-                    ex.setDisplayMessage(e.getMessage());
-                    onError(ex);        //权限错误，需要实现
-                    break;
-                case NOT_FOUND:
-                case REQUEST_TIMEOUT:
-                case GATEWAY_TIMEOUT:
-                case INTERNAL_SERVER_ERROR:
-                case BAD_GATEWAY:
-                case SERVICE_UNAVAILABLE:
-                default:
-                    ex.setDisplayMessage(networkMsg);  //均视为网络错误
-                    onError(ex);
-                    break;
-            }
+            ex.setDisplayMessage(ErrorMsg.getErrorMsg(httpException.code()));
+            onMyError(ex);
         } else if (e instanceof ResultException){    //服务器返回的错误
             ResultException resultException = (ResultException) e;
             ex = new ApiException(resultException, resultException.getErrCode());
-            onError(ex);
+            ex.setDisplayMessage(resultException.getMessage());
+            onMyError(ex);
         } else if (e instanceof JsonParseException
                 || e instanceof JSONException
                 || e instanceof ParseException){
-            ex = new ApiException(e, ApiException.PARSE_ERROR);
+            ex = new ApiException(e, ErrorMsg.PARSE_ERROR);
             ex.setDisplayMessage(parseMsg);            //均视为解析错误
-            onError(ex);
-        } else {
-            ex = new ApiException(e, ApiException.UNKNOWN);
+            onMyError(ex);
+        }else if(e instanceof SocketTimeoutException){
+            ex = new ApiException(e, ErrorMsg.TIMEOUT_ERROR);
+            ex.setDisplayMessage("服务器连接超时，请稍后再试！");            //连接超时
+            onMyError(ex);
+        } else{
+            ex = new ApiException(e, ErrorMsg.UNKNOWN);
             ex.setDisplayMessage(unknownMsg);          //未知错误
-            onError(ex);
+            onMyError(ex);
         }
     }
 
@@ -140,5 +125,5 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
 
     }
     protected abstract void onResult(T t);
-    protected abstract void onError(ResultException rx);
+    protected abstract void onMyError(ApiException rx);
 }

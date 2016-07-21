@@ -37,18 +37,17 @@ public class JsonResponseBodyConverter<T> implements Converter<ResponseBody, T> 
     @Override
     public T convert(ResponseBody responseBody) throws IOException {
         try {
-        String response = responseBody.string();
+            String response = responseBody.string();
 
-        ResultResponse resultResponse = mGson.fromJson(response, ResultResponse.class);
-        Logger.w("服务器数据：" + response);
-        Logger.w("resultResponse：" + resultResponse.toString());
-        if (resultResponse.code == 0){
-            return adapter.fromJson(response);
-        }else{
-            throw new ResultException(resultResponse.code, resultResponse.message);
-        }
-
-
+            ResultResponse resultResponse = mGson.fromJson(response, ResultResponse.class);
+            Logger.w("服务器数据：" + response);
+            Logger.w("resultResponse：" + resultResponse.toString());
+            if (resultResponse.response_text.code == 0){
+                return adapter.fromJson(response);
+            }else{
+                throw new ResultException(resultResponse.response_text.code
+                        , resultResponse.response_text.message);
+            }
         } finally {
             responseBody.close();
         }
