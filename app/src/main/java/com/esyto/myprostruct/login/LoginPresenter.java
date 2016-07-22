@@ -43,4 +43,8 @@ public class LoginPresenter extends LoginContract.Presenter {
         }));
     }
 
+    @Override
+    public void onStart() {
+
+    }
 }
