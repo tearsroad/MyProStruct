@@ -1,15 +1,14 @@
 package com.esyto.myprostruct;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ec2.tools.http.BaseTast;
 import com.esyto.myprostruct.base.BaseActivity;
-import com.esyto.myprostruct.login.LoginActivity;
-import com.esyto.myprostruct.ui.UserListActivity;
+import com.esyto.myprostruct.ui.activity.LoginActivity;
+import com.esyto.myprostruct.ui.activity.AccountActivity;
+import com.esyto.myprostruct.ui.activity.UserListActivity;
 import com.orhanobut.logger.Logger;
 
 import butterknife.Bind;
@@ -51,8 +50,8 @@ public class MainActivity extends BaseActivity {
         String ts = "";
         BaseTast t = new BaseTast();
         ts = t.testForLib();
-        Toast.makeText(this, "butterKnife onclick!" + ts, Toast.LENGTH_LONG).show();
-        startActivity(new Intent(this, RxTestActivity.class));
+//        Toast.makeText(this, "butterKnife onclick!" + ts, Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, AccountActivity.class));
     }
 
     @OnClick(R.id.btn_login)

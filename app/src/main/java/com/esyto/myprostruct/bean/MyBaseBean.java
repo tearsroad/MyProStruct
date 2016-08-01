@@ -1,19 +1,15 @@
-package com.esyto.myprostruct.api.error;
+package com.esyto.myprostruct.bean;
 
 import com.esyto.myprostruct.util.LogUtil;
 import com.google.gson.Gson;
 
 /**
- * Created by lhxez on 2016/7/20.
+ * Created by lhxez on 2016/7/14.
  */
 
-public class ResultResponse {
+public class MyBaseBean <T>{
 
-    public Data response_text;
-    public class Data{
-        public int code;
-        public String message;
-    }
+    public T response_text;
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();

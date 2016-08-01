@@ -1,11 +1,9 @@
-package com.esyto.myprostruct.api;
+package com.esyto.myprostruct.api.test;
 
 
 import android.util.Log;
 
 import com.esyto.myprostruct.App;
-import com.esyto.myprostruct.api.error.ResponseConverterFactory;
-import com.esyto.myprostruct.api.error.StringConverter;
 import com.esyto.myprostruct.util.NetWorkUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,39 +21,35 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by baixiaokang on 16/3/9.
  */
-public class Api {
+public class ApiTest {
 
     public static final String X_LC_Id = "i7j2k7bm26g7csk7uuegxlvfyw79gkk4p200geei8jmaevmx";
     public static final String X_LC_Key = "n6elpebcs84yjeaj5ht7x0eii9z83iea8bec9szerejj7zy3";
-    public static final String BASE_URL = "http://api.esyto.com:9090/esypay/";
+    public static final String BASE_URL = "https://leancloud.cn:443/1.1/";
 
     public static final int DEFAULT_TIMEOUT = 5;
 
     public Retrofit retrofit;
-    public ApiService movieService;
+    public ApiServiceTest movieService;
     Interceptor mInterceptor = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
             return chain.proceed(chain.request().newBuilder()
-//                    .addHeader("X-LC-Id", X_LC_Id)
-//                    .addHeader("X-LC-Key", X_LC_Key)
+                    .addHeader("X-LC-Id", X_LC_Id)
+                    .addHeader("X-LC-Key", X_LC_Key)
                     .addHeader("Content-Type", "application/json")
                     .build());
         }
     };
-//    Interceptor mInterceptor = (chain) -> chain.proceed(chain.request().newBuilder()
-//            .addHeader("X-LC-Id", X_LC_Id)
-//            .addHeader("X-LC-Key", X_LC_Key)
-//            .addHeader("Content-Type", "application/json")
-//            .build());
 
 
     //构造方法私有
-    private Api() {
+    private ApiTest() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -72,30 +66,24 @@ public class Api {
                 .build();
 
 
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(String.class,new StringConverter()).
-                setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").
-                serializeNulls().
-                create();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").serializeNulls().create();
 
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
-                //注册自定义的工厂类
-                .addConverterFactory(ResponseConverterFactory.create(gson))
-//                .addConverterFactory(GsonConverterFactory.create(gson))//自动用gson转换工具
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//service返回值就不在是一个Call了，而是一个Observable
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .baseUrl(BASE_URL)
                 .build();
-        movieService = retrofit.create(ApiService.class);
+        movieService = retrofit.create(ApiServiceTest.class);
     }
 
     //在访问HttpMethods时创建单例
     private static class SingletonHolder {
-        private static final Api INSTANCE = new Api();
+        private static final ApiTest INSTANCE = new ApiTest();
     }
 
     //获取单例
-    public static Api getInstance() {
+    public static ApiTest getInstance() {
         return SingletonHolder.INSTANCE;
     }
 

@@ -1,10 +1,11 @@
 package com.esyto.myprostruct.api.error;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.orhanobut.logger.Logger;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -38,16 +39,25 @@ public class JsonResponseBodyConverter<T> implements Converter<ResponseBody, T> 
     public T convert(ResponseBody responseBody) throws IOException {
         try {
             String response = responseBody.string();
-
-            ResultResponse resultResponse = mGson.fromJson(response, ResultResponse.class);
+            JSONObject obj = new JSONObject(response);
             Logger.w("服务器数据：" + response);
-            Logger.w("resultResponse：" + resultResponse.toString());
-            if (resultResponse.response_text.code == 0){
-                return adapter.fromJson(response);
+            if(obj.has("response_text")) {
+                ResultResponse resultResponse = mGson.fromJson(response, ResultResponse.class);
+                if (resultResponse.response_text.code == 0) {
+                    response = obj.getString("response_text");
+                    return adapter.fromJson(response);
+                } else {
+                    throw new ResultException(resultResponse.response_text.code
+                            , resultResponse.response_text.message);
+                }
             }else{
-                throw new ResultException(resultResponse.response_text.code
-                        , resultResponse.response_text.message);
+                return adapter.fromJson(response);
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            responseBody.close();
+            throw new ResultException(ErrorMsg.PARSE_ERROR
+                    , ErrorMsg.getErrorMsg(ErrorMsg.PARSE_ERROR));
         } finally {
             responseBody.close();
         }

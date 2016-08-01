@@ -4,16 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 
 import com.esyto.myprostruct.R;
-import com.esyto.myprostruct.base.util.SpUtil;
-import com.esyto.myprostruct.base.util.TUtil;
-import com.esyto.myprostruct.view.layout.SwipeBackLayout;
+import com.esyto.myprostruct.util.SpUtil;
+import com.esyto.myprostruct.util.TUtil;
+import com.esyto.myprostruct.ui.layout.SwipeBackLayout;
 
 import butterknife.ButterKnife;
 
@@ -39,8 +38,12 @@ public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel>
         mContext = this;
         mPresenter = TUtil.getT(this, 0);
         mModel = TUtil.getT(this, 1);
+
         this.initView();
-        if (this instanceof BaseView) mPresenter.setVM(this, mModel);
+        if (this instanceof BaseView){
+            mPresenter.mContext = mContext;
+            mPresenter.setVM(this, mModel);
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,4 +10,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.esyto.myprostruct.MainActivity"
     android:orientation="vertical">
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_list"
+        android:text="获取列表"/>
+    <ListView
+        android:id="@+id/lv_user"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"></ListView>
+    <TextView
+        android:id="@+id/tv_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    <com.esyto.myprostruct.ui.layout.TRecyclerView
+        android:id="@+id/trv_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </LinearLayout>

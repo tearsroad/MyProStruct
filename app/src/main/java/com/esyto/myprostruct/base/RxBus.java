@@ -2,7 +2,7 @@ package com.esyto.myprostruct.base;
 
 import android.support.annotation.NonNull;
 
-import com.esyto.myprostruct.base.util.LogUtil;
+import com.esyto.myprostruct.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;

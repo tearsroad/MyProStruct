@@ -6,7 +6,7 @@ import android.content.Context;
  * Created by baixiaokang on 16/4/22.
  */
 public abstract class BasePresenter<E, T> {
-    public Context context;
+    public Context mContext;
     public E mModel;
     public T mView;
     public RxManager mRxManager = new RxManager();

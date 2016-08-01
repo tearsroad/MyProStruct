@@ -4,7 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.esyto.myprostruct.base.util.SpUtil;
+import com.esyto.myprostruct.api.DataCache;
+import com.esyto.myprostruct.util.SpUtil;
 
 
 /**
@@ -12,12 +13,14 @@ import com.esyto.myprostruct.base.util.SpUtil;
  */
 public class App extends Application {
     private static App mApp;
+    public static DataCache mDataCache;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mApp = this;
         SpUtil.init(this);
+        mDataCache = new DataCache();
     }
 
     public static Context getAppContext() {

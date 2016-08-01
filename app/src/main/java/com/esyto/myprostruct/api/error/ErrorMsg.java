@@ -10,6 +10,7 @@ public class ErrorMsg {
     public static final int PARSE_ERROR = 1001;
     public static final int TIMEOUT_ERROR = 1002;
     public static final int NONET_ERROR = 1003;
+
     public static String getErrorMsg(int code){
         String msg = "请求服务器，未知错误。";
         switch (code){
@@ -39,6 +40,9 @@ public class ErrorMsg {
                 break;
             case 504:
                 msg = "网关超时。";
+                break;
+            case PARSE_ERROR:
+                msg = "JSON解析失败";
                 break;
         }
         return msg;
